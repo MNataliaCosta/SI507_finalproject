@@ -22,25 +22,26 @@ session = db.session
 
 
 #DEFINE CLASSES - set relationships and instance variables
-performances = db.Table('performance',db.Column('event_id',db.Integer, db.ForeignKey('event.id')),db.Column('artist_id',db.Integer, db.ForeignKey('artist.id')))
+performances = db.Table('performance',db.Column('event_id',db.Integer, db.ForeignKey('event.id'), primary_key=True),db.Column('artist_id',db.Integer, db.ForeignKey('artist.id'), primary_key=True))
 
 
 class Event(db.Model):
+    # def __init__(self): -- test
+        # self.artist = d["_embedded"]["attractions"][0]["name"]
+        # self.venue = d["_embedded"]["venues"][0]["name"]
     __tablename__ = "event"
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(250)) #investigate json to see if it exists
-    date = db.Column(db.String(64)) #investigate type
+    name = db.Column(db.String(250))
+    date = db.Column(db.String(64))
     artists = db.relationship("Artist", secondary=performances, backref=db.backref("event"))
     genre_id = db.Column(db.Integer, db.ForeignKey("genre.id"))
     venue_id = db.Column(db.Integer, db.ForeignKey("venue.id"))
-    # def __init__(self):
-        # self.artist = d["_embedded"]["attractions"][0]["name"]
-        # self.venue = d["_embedded"]["venues"][0]["name"]
+
 
     def __repr__(self):
         return "{} by {} at {} on {}".format(self.name, self.artist_id, self.venue_id, self.date)
 
-class Artist():
+class Artist(db.Model):
     __tablename__ = "artist"
     id = db.Column(db.Integer, primary_key=True)
     artist_name = db.Column(db.String(64), unique=True)
@@ -49,7 +50,7 @@ class Artist():
     def __repr__(self):
         return "Artist name: {} | ID: {}".format(self.artist_name, self.id)
 
-class Genre():
+class Genre(db.Model):
     __tablename__ = "genre"
     id = db.Column(db.Integer, primary_key=True)
     genre_name = db.Column(db.String(64), unique=True)
@@ -58,21 +59,21 @@ class Genre():
     def __repr__(self):
         return "Genre name: {} | ID: {}".format(self.gente_name, self.id)
 
-class Venue():
+class Venue(db.Model):
     __tablename__ = "venue"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=True)
     address = db.Column(db.String(250))
     city = db.Column(db.String(64))
-    state = db.Column(db.String(64))
+    country = db.Column(db.String(64))
     events = db.relationship("Event")
 
     def __repr__(self):
         return "Venue: {} | City: {} | State: {}".format(self.name, self.city, self.state)
 
-class Song():
+class Song(db.Model):
     __tablename__ = "song"
-    id = db.Column(db.Integer, primary_key)
+    id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(250))
     album = db.Column(db.String(250))
     length = db.Column(db.Integer) #check type
@@ -148,21 +149,44 @@ def get_itunes_songs(artist_result):
 
 #GET DATA FROM APIs
 raw_events_data = get_ticketmaster_music_events()
-events_list = []
+# events_list = []
 
-for events_data in raw_events_data["_embedded"]["events"]: #create instances for my classes and append them to list? or commit them directly to database?
-    print(songs_data)
-    # new_event = Event(events_data)
-    # events_list.append(new_event)
+# raw_songs_data = get_itunes_songs(artist_result)
+raw_songs_data = get_itunes_songs("Ariana Grande")
+# songs_list = []
+
+
+#PROCESS DATA TO SAVE IT ON DATABASE
+for e in raw_events_data["_embedded"]["events"]: #create instances for my classes and append them to list? or commit them directly to database?
+    print(e["_embedded"]["venues"][0]["country"]["name"])
+    # new_event = Event(name=e["name"], date=e["dates"]["start"]["localDate"] , artists= , genre_id=, venue_id=, )
+    # artist = Artist()
+    # new_genre = Genre(genre_name=events_data["classifications"][0]["genre"]["name"])
+    # new_venue = Venue(name=e["_embedded"]["venues"][0]["name"] , address=e["_embedded"]["venues"][0]["address"]["line1"] , city=e["_embedded"]["venues"][0]["city"]["name"] , country=e["_embedded"]["venues"][0]["country"]["name"])
+
+    # session.add(new_genre)
+    # session.commit()
+
 
 # for i in events_list:
 #     print(i)
 
-raw_songs_data = get_itunes_songs(artist_result)
-songs_list = []
+# def get_or_create_artist(artist_name):
+#     artist = Artist.query.filter_by(name=artist_name).first()
+#     if artist:
+#         return artist
+#     else:
+#         artist = Artist(name=artist_name)
+#         session.add(artist)
+#         session.commit()
+#         return artist
 
-for songs_data in raw_songs_data["results"]: #create instances for my classes and append them to list? or commit them directly to database?
-    print(songs_data)
+
+for s in raw_songs_data["results"]: #create instances for my classes and append them to list? or commit them directly to database?
+    print(s["trackTimeMillis"])
+    # new_song = Song(title=s["trackName"], album=s["collectionName"], length=s["trackTimeMillis"], artist_id=artist.id, genre_id=genre.id)
 
 
-#PROCESS DATA TO SAVE IT ON DATABASE
+if __name__ == '__main__':
+    db.create_all()
+    # app.run()
