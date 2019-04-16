@@ -7,21 +7,79 @@ import requests
 from flask import Flask, render_template, session, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 
+#APPLICATION CONFIGURATION AND DATABASE SETUP -- consider separating into new file
+app = Flask(__name__)
+app.debug = True
+app.use_reloader = True
+app.config['SECRET_KEY'] = 'ngrjfdnjngdsfngdipfng'
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///./music_events.db'
+app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+session = db.session
+
+
 #DEFINE CLASSES - set relationships and instance variables
-class Event(): #test with base class first, then define them as SQLAlchemy
-    pass
+performances = db.Table('performance',db.Column('event_id',db.Integer, db.ForeignKey('event.id')),db.Column('artist_id',db.Integer, db.ForeignKey('artist.id')))
+
+
+class Event(db.Model):
+    __tablename__ = "event"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(250)) #investigate json to see if it exists
+    date = db.Column(db.String(64)) #investigate type
+    artists = db.relationship("Artist", secondary=performances, backref=db.backref("event"))
+    genre_id = db.Column(db.Integer, db.ForeignKey("genre.id"))
+    venue_id = db.Column(db.Integer, db.ForeignKey("venue.id"))
+    # def __init__(self):
+        # self.artist = d["_embedded"]["attractions"][0]["name"]
+        # self.venue = d["_embedded"]["venues"][0]["name"]
+
+    def __repr__(self):
+        return "{} by {} at {} on {}".format(self.name, self.artist_id, self.venue_id, self.date)
 
 class Artist():
-    pass
+    __tablename__ = "artist"
+    id = db.Column(db.Integer, primary_key=True)
+    artist_name = db.Column(db.String(64), unique=True)
+
+
+    def __repr__(self):
+        return "Artist name: {} | ID: {}".format(self.artist_name, self.id)
 
 class Genre():
-    pass
+    __tablename__ = "genre"
+    id = db.Column(db.Integer, primary_key=True)
+    genre_name = db.Column(db.String(64), unique=True)
+    events = db.relationship("Event")
+
+    def __repr__(self):
+        return "Genre name: {} | ID: {}".format(self.gente_name, self.id)
 
 class Venue():
-    pass
+    __tablename__ = "venue"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), unique=True)
+    address = db.Column(db.String(250))
+    city = db.Column(db.String(64))
+    state = db.Column(db.String(64))
+    events = db.relationship("Event")
+
+    def __repr__(self):
+        return "Venue: {} | City: {} | State: {}".format(self.name, self.city, self.state)
 
 class Song():
-    pass
+    __tablename__ = "song"
+    id = db.Column(db.Integer, primary_key)
+    title = db.Column(db.String(250))
+    album = db.Column(db.String(250))
+    length = db.Column(db.Integer) #check type
+    artist_id = db.Column(db.Integer, db.ForeignKey("artist.id"))
+    genre_id = db.Column(db.Integer, db.ForeignKey("genre.id"))
+    artists = db.relationship("Artist")
+    genres = db.relationship("Genre")
 
 
 #DEFINE CACHING PATTERN
@@ -93,15 +151,18 @@ raw_events_data = get_ticketmaster_music_events()
 events_list = []
 
 for events_data in raw_events_data["_embedded"]["events"]: #create instances for my classes and append them to list? or commit them directly to database?
-    print(events_data)
+    print(songs_data)
+    # new_event = Event(events_data)
+    # events_list.append(new_event)
 
-raw_songs_data = get_itunes_songs("Ariana Grande")
+# for i in events_list:
+#     print(i)
+
+raw_songs_data = get_itunes_songs(artist_result)
 songs_list = []
 
-for songs_data in raw_songs_data["results"]:
+for songs_data in raw_songs_data["results"]: #create instances for my classes and append them to list? or commit them directly to database?
     print(songs_data)
 
-
-#SETUP DATABASE -- consider separating into new file
 
 #PROCESS DATA TO SAVE IT ON DATABASE
