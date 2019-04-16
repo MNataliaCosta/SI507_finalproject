@@ -7,34 +7,33 @@ Natalia Costa
 ---
 
 ## Project Description
-
-This should be a brief description of what your project is and does.  
+This project aggregates music events data from Ticketmaster and song data from iTunes. It allows users to:
+1. see how many events there currently are in a venue, city, or US;
+2. see up to 10 events filtered by price, genre, or artist;
+3. see up to 10 iTunes song suggestions based on the artist of selected event
 
 ## How to run
-
-1. First, you should ... (e.g. install all requirements with `pip install -r requirements.txt`)
-2. Second, you should ... (e.g. run `python programname.py runserver` or whatever else is appropriate)
-3. Anything else
+1. First, install all requirements with `pip install -r requirements.txt`
+2. Second, run `python programname.py runserver`
 
 ## How to use
-
-1. A useful instruction goes here
-2. A useful second step here
+1. Open your browser and access http://localhost:5000
+2. Interact with the application using the different routes available (see *Routes in this application* for more details )
 3. (Optional): Markdown syntax to include an screenshot/image: ![alt text](image.jpg)
 
 ## Routes in this application
-- `/home` -> this is the home page
-- `/form` -> this route has a form for user input
-- `/result` -> this route is where the form sends the result...
-- `/newuser/<username>` -> this route also takes input of a name and shows you a greeting
+- `/` -> this is the home page and contains links to navigate to other routes
+- `/events-per-location` -> shows the total number of Ticketmaster events currently available in the U.S; the user will also have the opportunity to see the number of events filtered by city or venue
+- `/top-10-events` -> shows a list of up to 10 event recommendations, which will be provided based on the user input on genre or artist
+- `/top-10-songs` -> shows a list of up to 10 iTunes songs of the artist of the selected event
 
-## How to run tests
+## How to run tests - WORK IN PROGRESS
 1. First... (e.g. access a certain directory if necessary)
 2. Second (e.g. any other setup necessary)
 3. etc (e.g. run the specific test file)
 NOTE: Need not have 3 steps, but should have as many as are appropriate!
 
-## In this repository:
+## In this repository: - WORK IN PROGRESS
 - Directory Name
   - File in directory
   - File in directory
@@ -42,7 +41,7 @@ NOTE: Need not have 3 steps, but should have as many as are appropriate!
 - File name
 
 ---
-## Code Requirements for Grading
+## Code Requirements for Grading - WORK IN PROGRESS
 Please check the requirements you have accomplished in your code as demonstrated.
 - [x] This is a completed requirement.
 - [ ] This is an incomplete requirement.
