@@ -13,8 +13,9 @@ This project aggregates music events data from Ticketmaster and song data from i
 3. see up to 10 iTunes song suggestions based on the artist of selected event
 
 ## How to run
-1. First, install all requirements with `pip install -r requirements.txt`
-2. Second, run `python programname.py runserver`
+1. Using your command line interface (e.g. GitBash), access the directory where the project files are saves  
+2. Install all requirements with `pip install -r requirements.txt`
+3. Run `python SI507project_tools.py runserver`
 
 ## How to use
 1. Open your browser and access http://localhost:5000
@@ -27,11 +28,10 @@ This project aggregates music events data from Ticketmaster and song data from i
 - `/top-10-events` -> shows a list of up to 10 event recommendations, which will be provided based on the user input on genre or artist
 - `/top-10-songs` -> shows a list of up to 10 iTunes songs of the artist of the selected event
 
-## How to run tests - WORK IN PROGRESS
-1. First... (e.g. access a certain directory if necessary)
-2. Second (e.g. any other setup necessary)
-3. etc (e.g. run the specific test file)
-NOTE: Need not have 3 steps, but should have as many as are appropriate!
+## How to run tests
+1. Using your command line interface (e.g. GitBash), access the directory where the project files are saves
+2. Run `python SI507project_tests.py`
+3. There are currently 9 tests in the test suite; all of them should pass for the code to be properly working
 
 ## In this repository: - WORK IN PROGRESS
 - Directory Name
