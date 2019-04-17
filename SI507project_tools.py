@@ -45,6 +45,7 @@ class Artist(db.Model):
     __tablename__ = "artist"
     id = db.Column(db.Integer, primary_key=True)
     artist_name = db.Column(db.String(64), unique=True)
+    events = db.relationship("Event", secondary=performances, backref=db.backref("artist"))
 
 
     def __repr__(self):
@@ -57,7 +58,7 @@ class Genre(db.Model):
     events = db.relationship("Event")
 
     def __repr__(self):
-        return "Genre name: {} | ID: {}".format(self.gente_name, self.id)
+        return "Genre name: {} | ID: {}".format(self.genre_name, self.id)
 
 class Venue(db.Model):
     __tablename__ = "venue"
@@ -149,22 +150,25 @@ def get_itunes_songs(artist_result):
 
 #GET DATA FROM APIs
 raw_events_data = get_ticketmaster_music_events()
-# events_list = []
+events_list = []
+venues_list = []
+genres_list = []
+artists_list = []
 
 # raw_songs_data = get_itunes_songs(artist_result)
 raw_songs_data = get_itunes_songs("Ariana Grande")
-# songs_list = []
+songs_list = []
 
 
-#PROCESS DATA TO SAVE IT ON DATABASE
-for e in raw_events_data["_embedded"]["events"]: #create instances for my classes and append them to list? or commit them directly to database?
+#PROCESS DATA API DATA INTO LISTS OF THE DIFFERENT TABLE INSTANCES
+for e in raw_events_data["_embedded"]["events"]:
     print(e["_embedded"]["venues"][0]["country"]["name"])
     # new_event = Event(name=e["name"], date=e["dates"]["start"]["localDate"] , artists= , genre_id=, venue_id=, )
     # artist = Artist()
-    # new_genre = Genre(genre_name=events_data["classifications"][0]["genre"]["name"])
+    # new_genre = Genre(genre_name=e["classifications"][0]["genre"]["name"])
     # new_venue = Venue(name=e["_embedded"]["venues"][0]["name"] , address=e["_embedded"]["venues"][0]["address"]["line1"] , city=e["_embedded"]["venues"][0]["city"]["name"] , country=e["_embedded"]["venues"][0]["country"]["name"])
-
-    # session.add(new_genre)
+    #
+    # session.add(new_venue)
     # session.commit()
 
 
@@ -182,11 +186,15 @@ for e in raw_events_data["_embedded"]["events"]: #create instances for my classe
 #         return artist
 
 
-for s in raw_songs_data["results"]: #create instances for my classes and append them to list? or commit them directly to database?
-    print(s["trackTimeMillis"])
+# for s in raw_songs_data["results"]: #create instances for my classes and append them to list? or commit them directly to database?
+#     print(s["trackTimeMillis"])
     # new_song = Song(title=s["trackName"], album=s["collectionName"], length=s["trackTimeMillis"], artist_id=artist.id, genre_id=genre.id)
 
+#SAVE LISTS OF INSTANCES INTO THE DATABASE
 
-if __name__ == '__main__':
-    db.create_all()
+
+
+#CREATE DATABASE AND RUN FLASK APP
+# if __name__ == '__main__':
+#     db.create_all()
     # app.run()
