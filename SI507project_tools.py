@@ -162,13 +162,13 @@ songs_list = []
 
 #PROCESS DATA API DATA INTO LISTS OF THE DIFFERENT TABLE INSTANCES
 for e in raw_events_data["_embedded"]["events"]:
-    print(e["_embedded"]["venues"][0]["country"]["name"])
+    # print(e["_embedded"]["venues"][0]["country"]["name"])
     # new_event = Event(name=e["name"], date=e["dates"]["start"]["localDate"] , artists= , genre_id=, venue_id=, )
     # artist = Artist()
-    # new_genre = Genre(genre_name=e["classifications"][0]["genre"]["name"])
+    new_genre = Genre(genre_name=e["classifications"][0]["genre"]["name"])
     # new_venue = Venue(name=e["_embedded"]["venues"][0]["name"] , address=e["_embedded"]["venues"][0]["address"]["line1"] , city=e["_embedded"]["venues"][0]["city"]["name"] , country=e["_embedded"]["venues"][0]["country"]["name"])
     #
-    # session.add(new_venue)
+    # session.add(new_genre)
     # session.commit()
 
 
@@ -190,11 +190,25 @@ for e in raw_events_data["_embedded"]["events"]:
 #     print(s["trackTimeMillis"])
     # new_song = Song(title=s["trackName"], album=s["collectionName"], length=s["trackTimeMillis"], artist_id=artist.id, genre_id=genre.id)
 
-#SAVE LISTS OF INSTANCES INTO THE DATABASE
+#FlASK ROUTES - SAVE LISTS OF INSTANCES INTO THE DATABASE
+@app.route('/') ##Home Page - links to other routes and instructions on how to use them
+def index():
+    return render_template("index.html")
 
+@app.route('/events-per-location')
+def filter_by_location(): ##number of events available filtered by location (US, city, or venue)
+    return render_template("location.html")
+
+@app.route('/top-10-events')
+def get_top_events(): ##top 10 events based on user input on genre or artist
+    return render_template("topevents.html")
+
+@app.route('/top-10-songs')
+def get_top_songs(): ##top 10 iTunes songs for artist of a selected event
+    return render_template("topsongs.html")
 
 
 #CREATE DATABASE AND RUN FLASK APP
-# if __name__ == '__main__':
-#     db.create_all()
-    # app.run()
+if __name__ == '__main__':
+    db.create_all()
+    app.run()
