@@ -43,7 +43,8 @@ class Event(db.Model):
 class Artist(db.Model):
     __tablename__ = "artist"
     id = db.Column(db.Integer, primary_key=True)
-    artist_name = db.Column(db.String(64), unique=True)
+    # artist_name = db.Column(db.String(64), unique=True)
+    artist_name = db.Column(db.String(64))
     events = db.relationship("Event", secondary=performances, backref=db.backref("artist", lazy='dynamic'),lazy='dynamic')
 
 
@@ -53,7 +54,8 @@ class Artist(db.Model):
 class Genre(db.Model):
     __tablename__ = "genre"
     id = db.Column(db.Integer, primary_key=True)
-    genre_name = db.Column(db.String(64), unique=True)
+    # genre_name = db.Column(db.String(64), unique=True)
+    genre_name = db.Column(db.String(64))
     events = db.relationship("Event")
 
     def __repr__(self):
@@ -62,7 +64,8 @@ class Genre(db.Model):
 class Venue(db.Model):
     __tablename__ = "venue"
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), unique=True)
+    # name = db.Column(db.String(64), unique=True)
+    name = db.Column(db.String(64))
     address = db.Column(db.String(250))
     city = db.Column(db.String(64))
     country = db.Column(db.String(64))
@@ -149,27 +152,46 @@ def get_itunes_songs(artist_result):
 
 #GET DATA FROM APIs
 raw_events_data = get_ticketmaster_music_events()
-events_list = []
-venues_list = []
-genres_list = []
-artists_list = []
+# events_list = []
+# venues_list = []
+# genres_list = []
+# artists_list = []
+e = raw_events_data["_embedded"]["events"]
 
 # raw_songs_data = get_itunes_songs(artist_result)
 raw_songs_data = get_itunes_songs("Ariana Grande")
-songs_list = []
+# songs_list = []
+s = raw_songs_data["results"]
 
+# for i in e:
+#     print(type(i["_embedded"]))
 
 #FlASK ROUTES - SAVE LISTS OF INSTANCES INTO THE DATABASE
 @app.route('/') ##Home Page - links to other routes and instructions on how to use them
 def index():
+    for event_item in e:
+        populate_events = create_event(event_item, event_item["_embedded"]["attractions"][0]["name"])
+        populate_artist = create_artist(event_item["_embedded"]["attractions"][0]["name"])
+        populate_venues = create_venue(event_item)
+        populate_genre = create_genre(event_item["classifications"][0]["genre"]["name"])
+
+    for song_item in s:
+        populate_songs = create_song(song_item, artist_name=event_item["_embedded"]["attractions"][0]["name"], genre_name=event_item["classifications"][0]["genre"]["name"])
     return render_template("index.html")
 
 @app.route('/events-per-location')
 def filter_by_location(): ##number of events available filtered by location (US, city, or venue)
-    return render_template("location.html")
+    # all_cities = []
+    # all_venues = []
+    # for event_item in e:
+    #     pull_venues = get_or_create_venue(event_item)
+    # write query to get all of them and update param in render_template below!
+    return render_template("location.html", all_cities= ['Las Vegas', 'Miami', 'Los Angeles'], all_venues=['T-Mobile Arena', 'AmericanAirlines Arena', 'STAPLES Center'])
 
 @app.route('/top-10-events')
 def get_top_events(): ##top 10 events based on user input on genre or artist
+    # for event_item in e:
+    #     pull_genre = get_or_create_genre(event_item)
     return render_template("topevents.html")
 
 @app.route('/top-10-songs')

@@ -1,3 +1,18 @@
-<h1>Test - Events by Location</h1>
+<h1>Search Events by Location</h1>
+
+<!-- <form action="http://localhost:5000/result" method='GET'> -->
+<form action="" method='GET'> <!-- update action before submitting -->
+  <select name="city">
+    {% for city in all_cities %}
+    <option value="city">{{city}}</option>
+    {% endfor %}
+  </select>
+  <select name="venue">
+    {% for venue in all_venues %}
+    <option value="venue">{{venue}}</option>
+    {% endfor %}
+  </select>
+  <input type="submit" value="Submit">
+</form>
 
 <a href="{{ url_for('index')}}">Return to home page</a>
