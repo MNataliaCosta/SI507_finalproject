@@ -6,12 +6,13 @@ import json
 import requests
 from flask import Flask, render_template, session, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
+from SI507project_dbpopulate import *
 
 #APPLICATION CONFIGURATION AND DATABASE SETUP -- consider separating into new file
 app = Flask(__name__)
 app.debug = True
 app.use_reloader = True
-app.config['SECRET_KEY'] = 'ngrjfdnjngdsfngdipfng'
+app.config['SECRET_KEY'] = 'hard to guess string for app security adgsdfsadfdflsdfsj'
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///./music_events.db'
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
@@ -24,7 +25,6 @@ session = db.session
 #DEFINE CLASSES - set relationships and instance variables
 performances = db.Table('performance',db.Column('event_id',db.Integer, db.ForeignKey('event.id'), primary_key=True),db.Column('artist_id',db.Integer, db.ForeignKey('artist.id'), primary_key=True))
 
-
 class Event(db.Model):
     # def __init__(self): -- test
         # self.artist = d["_embedded"]["attractions"][0]["name"]
@@ -33,7 +33,6 @@ class Event(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(250))
     date = db.Column(db.String(64))
-    artists = db.relationship("Artist", secondary=performances, backref=db.backref("event"))
     genre_id = db.Column(db.Integer, db.ForeignKey("genre.id"))
     venue_id = db.Column(db.Integer, db.ForeignKey("venue.id"))
 
@@ -45,7 +44,7 @@ class Artist(db.Model):
     __tablename__ = "artist"
     id = db.Column(db.Integer, primary_key=True)
     artist_name = db.Column(db.String(64), unique=True)
-    events = db.relationship("Event", secondary=performances, backref=db.backref("artist"))
+    events = db.relationship("Event", secondary=performances, backref=db.backref("artist", lazy='dynamic'),lazy='dynamic')
 
 
     def __repr__(self):
@@ -159,36 +158,6 @@ artists_list = []
 raw_songs_data = get_itunes_songs("Ariana Grande")
 songs_list = []
 
-
-#PROCESS DATA API DATA INTO LISTS OF THE DIFFERENT TABLE INSTANCES
-for e in raw_events_data["_embedded"]["events"]:
-    # print(e["_embedded"]["venues"][0]["country"]["name"])
-    # new_event = Event(name=e["name"], date=e["dates"]["start"]["localDate"] , artists= , genre_id=, venue_id=, )
-    # artist = Artist()
-    new_genre = Genre(genre_name=e["classifications"][0]["genre"]["name"])
-    # new_venue = Venue(name=e["_embedded"]["venues"][0]["name"] , address=e["_embedded"]["venues"][0]["address"]["line1"] , city=e["_embedded"]["venues"][0]["city"]["name"] , country=e["_embedded"]["venues"][0]["country"]["name"])
-    #
-    # session.add(new_genre)
-    # session.commit()
-
-
-# for i in events_list:
-#     print(i)
-
-# def get_or_create_artist(artist_name):
-#     artist = Artist.query.filter_by(name=artist_name).first()
-#     if artist:
-#         return artist
-#     else:
-#         artist = Artist(name=artist_name)
-#         session.add(artist)
-#         session.commit()
-#         return artist
-
-
-# for s in raw_songs_data["results"]: #create instances for my classes and append them to list? or commit them directly to database?
-#     print(s["trackTimeMillis"])
-    # new_song = Song(title=s["trackName"], album=s["collectionName"], length=s["trackTimeMillis"], artist_id=artist.id, genre_id=genre.id)
 
 #FlASK ROUTES - SAVE LISTS OF INSTANCES INTO THE DATABASE
 @app.route('/') ##Home Page - links to other routes and instructions on how to use them
