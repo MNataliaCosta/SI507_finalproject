@@ -74,16 +74,16 @@ class Venue(db.Model):
     def __repr__(self):
         return "Venue: {} | City: {} | State: {}".format(self.name, self.city, self.state)
 
-class Song(db.Model):
-    __tablename__ = "song"
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(250))
-    album = db.Column(db.String(250))
-    length = db.Column(db.Integer) #check type
-    artist_id = db.Column(db.Integer, db.ForeignKey("artist.id"))
-    genre_id = db.Column(db.Integer, db.ForeignKey("genre.id"))
-    artists = db.relationship("Artist")
-    genres = db.relationship("Genre")
+# class Song(db.Model):
+#     __tablename__ = "song"
+#     id = db.Column(db.Integer, primary_key=True)
+#     title = db.Column(db.String(250))
+#     album = db.Column(db.String(250))
+#     length = db.Column(db.Integer) #check type
+#     artist_id = db.Column(db.Integer, db.ForeignKey("artist.id"))
+#     genre_id = db.Column(db.Integer, db.ForeignKey("genre.id"))
+#     artists = db.relationship("Artist")
+#     genres = db.relationship("Genre")
 
 
 #DEFINE CACHING PATTERN
@@ -171,32 +171,26 @@ s = raw_songs_data["results"]
 def index():
     for event_item in e:
         populate_events = create_event(event_item, event_item["_embedded"]["attractions"][0]["name"])
-        populate_artist = create_artist(event_item["_embedded"]["attractions"][0]["name"])
+        populate_artist = create_artist(artist_name=event_item["_embedded"]["attractions"][0]["name"])
         populate_venues = create_venue(event_item)
-        populate_genre = create_genre(event_item["classifications"][0]["genre"]["name"])
-
-    for song_item in s:
-        populate_songs = create_song(song_item, artist_name=event_item["_embedded"]["attractions"][0]["name"], genre_name=event_item["classifications"][0]["genre"]["name"])
+        populate_genre = create_genre(genre_name=event_item["classifications"][0]["genre"]["name"])
     return render_template("index.html")
 
 @app.route('/events-per-location')
-def filter_by_location(): ##number of events available filtered by location (US, city, or venue)
-    # all_cities = []
-    # all_venues = []
-    # for event_item in e:
-    #     pull_venues = get_or_create_venue(event_item)
-    # write query to get all of them and update param in render_template below!
-    return render_template("location.html", all_cities= ['Las Vegas', 'Miami', 'Los Angeles'], all_venues=['T-Mobile Arena', 'AmericanAirlines Arena', 'STAPLES Center'])
+def filter_by_location():
+    all_cities = []
+    venues = Venue.query.all()
+    for item in venues:
+        all_cities.append(item.city)
+    return render_template("location.html", all_cities=all_cities)
 
-@app.route('/top-10-events')
-def get_top_events(): ##top 10 events based on user input on genre or artist
-    # for event_item in e:
-    #     pull_genre = get_or_create_genre(event_item)
-    return render_template("topevents.html")
+@app.route('/events-per-genre')
+def filter_by_genre():
+    return render_template("genre.html")
 
-@app.route('/top-10-songs')
-def get_top_songs(): ##top 10 iTunes songs for artist of a selected event
-    return render_template("topsongs.html")
+@app.route('/events-per-artist')
+def filter_by_artist():
+    return render_template("artists.html")
 
 
 #CREATE DATABASE AND RUN FLASK APP
