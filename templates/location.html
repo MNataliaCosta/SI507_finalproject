@@ -1,10 +1,9 @@
 <h1>Search Events by Location</h1>
 
-<!-- <form action="http://localhost:5000/result" method='GET'> -->
-<form action="" method='GET'> <!-- update action before submitting -->
+<form action="http://localhost:5000/events-per-location/result" method='GET'>
   <select name="city">
     {% for city in all_cities %}
-    <option value="city">{{city}}</option>
+    <option value="{{city}}">{{city}}</option>
     {% endfor %}
   </select>
   <input type="submit" value="Submit">

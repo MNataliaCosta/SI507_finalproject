@@ -4,7 +4,7 @@
 import os
 import json
 import requests
-from flask import Flask, render_template, session, redirect, url_for
+from flask import Flask, request, render_template, session, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from SI507project_dbpopulate import *
 
@@ -38,7 +38,7 @@ class Event(db.Model):
 
 
     def __repr__(self):
-        return "{} by {} at {} on {}".format(self.name, self.artist_id, self.venue_id, self.date)
+        return "{} by {} at {} on {}".format(self.name, self.artist, self.venue_id, self.date)
 
 class Artist(db.Model):
     __tablename__ = "artist"
@@ -72,7 +72,7 @@ class Venue(db.Model):
     events = db.relationship("Event")
 
     def __repr__(self):
-        return "Venue: {} | City: {} | State: {}".format(self.name, self.city, self.state)
+        return "Venue: {} | City: {} | Country: {}".format(self.name, self.city, self.country)
 
 # class Song(db.Model):
 #     __tablename__ = "song"
@@ -183,6 +183,23 @@ def filter_by_location():
     for item in venues:
         all_cities.append(item.city)
     return render_template("location.html", all_cities=all_cities)
+
+@app.route('/events-per-location/result', methods=['GET'])
+def get_location_result():
+    filtered_events = []
+    if request.method == "GET":
+        # print(request.args)
+        # if len(request.args) > 0:
+        for k in request.args:
+            city = request.args.get(k,"None")
+            # print(city)
+            venues = Venue.query.filter_by(city=city)
+            for item in venues:
+                # print(item)
+                events = Event.query.filter_by(venue_id=item.id)
+                for ev in events:
+                    filtered_events.append((ev.name, ev.date, item.name, item.city))
+    return render_template("location_results.html", city=city, filtered_events=filtered_events)
 
 @app.route('/events-per-genre')
 def filter_by_genre():
