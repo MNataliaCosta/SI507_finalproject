@@ -14,7 +14,7 @@ This project aggregates music events data from Ticketmaster and song data from i
 
 
 ## How to run
-1. Using your command line interface (e.g. GitBash), access the directory where the project files are saves  
+1. Using your command line interface (e.g. GitBash), access the directory where the project files are saved  
 2. Install all requirements with `pip install -r requirements.txt`
 3. Run `python SI507project_tools.py runserver`
 
