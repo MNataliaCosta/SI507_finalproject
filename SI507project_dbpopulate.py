@@ -43,7 +43,7 @@ def create_genre(genre_name):
         session.commit()
         return genre
 
-def create_song(dict, artist_name): ##how to get the event chosen as input?
+def create_song(dict, artist_name):
     song = Song.query.filter_by(title=dict["trackName"]).first()
     if song:
         return song

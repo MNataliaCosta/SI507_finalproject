@@ -26,9 +26,6 @@ session = db.session
 performances = db.Table('performance',db.Column('event_id',db.Integer, db.ForeignKey('event.id'), primary_key=True),db.Column('artist_id',db.Integer, db.ForeignKey('artist.id'), primary_key=True))
 
 class Event(db.Model):
-    # def __init__(self): -- test
-        # self.artist = d["_embedded"]["attractions"][0]["name"]
-        # self.venue = d["_embedded"]["venues"][0]["name"]
     __tablename__ = "event"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(250))
@@ -39,7 +36,6 @@ class Event(db.Model):
         "Artist",
         secondary=performances,
         back_populates="events")
-
 
     def __repr__(self):
         return "{} by {} at {} on {}".format(self.name, self.artist, self.venue_id, self.date)
@@ -53,7 +49,6 @@ class Artist(db.Model):
         "Event",
         secondary=performances,
         back_populates="artists")
-
 
     def __repr__(self):
         return "Artist name: {} | ID: {}".format(self.artist_name, self.id)
@@ -86,9 +81,10 @@ class Song(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(250))
     album = db.Column(db.String(250))
-    length = db.Column(db.Integer) #check type
+    length = db.Column(db.Integer)
     artist_id = db.Column(db.Integer, db.ForeignKey("artist.id"))
     artists = db.relationship("Artist")
+
 
 #DEFINE CACHING PATTERN
 CACHE_FNAME = "SI507finalproject_cached_data.json"
@@ -139,7 +135,6 @@ def get_itunes_songs(artist_result):
     iTunes_d_params["term"] = artist_result #required param
     iTunes_d_params["media"] = "music" #optional param
     iTunes_d_params["entity"] = "song" #optional param
-    # iTunes_d_params["limit"] = "20" #optional param, default = 50
     unique_identifier = params_unique_combination(iTunes_baseurl, iTunes_d_params)
 
     if unique_identifier in CACHE_DICTION:
@@ -156,16 +151,12 @@ def get_itunes_songs(artist_result):
 
 #GET DATA FROM APIs
 raw_events_data = get_ticketmaster_music_events()
-# events_list = []
-# venues_list = []
-# genres_list = []
-# artists_list = []
 e = raw_events_data["_embedded"]["events"]
 
-# for i in e:
-#     print(type(i["_embedded"]))
+# raw_songs_data = get_itunes_songs("Eagles")
 
-#FlASK ROUTES - SAVE LISTS OF INSTANCES INTO THE DATABASE
+
+#FlASK ROUTES
 @app.route('/') ##Home Page - links to other routes and instructions on how to use them
 def index():
     for event_item in e:
@@ -226,7 +217,6 @@ def get_genre_result():
                         filtered_events.append((ev.name, ev.date, venue.name, venue.city, venue.country))
     return render_template("genre_results.html", selected_genre=selected_genre, filtered_events=filtered_events)
 
-
 @app.route('/events-per-artist')
 def filter_by_artist():
     all_artists = []
@@ -259,7 +249,7 @@ def get_artist_result():
                 for song_item in s:
                     populate_song = create_song(song_item, selected_artist)
                     songs = Song.query.filter_by(artist_id=item.id)
-                    for song in songs[:10]:
+                    for song in songs:
                         song_recs.append((song.title))
     return render_template("artist_results.html", selected_artist=selected_artist, filtered_events=filtered_events, song_recs=song_recs)
 
