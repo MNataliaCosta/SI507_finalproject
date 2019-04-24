@@ -81,17 +81,14 @@ class Venue(db.Model):
     def __repr__(self):
         return "Venue: {} | City: {} | Country: {}".format(self.name, self.city, self.country)
 
-# class Song(db.Model):
-#     __tablename__ = "song"
-#     id = db.Column(db.Integer, primary_key=True)
-#     title = db.Column(db.String(250))
-#     album = db.Column(db.String(250))
-#     length = db.Column(db.Integer) #check type
-#     artist_id = db.Column(db.Integer, db.ForeignKey("artist.id"))
-#     genre_id = db.Column(db.Integer, db.ForeignKey("genre.id"))
-#     artists = db.relationship("Artist")
-#     genres = db.relationship("Genre")
-
+class Song(db.Model):
+    __tablename__ = "song"
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(250))
+    album = db.Column(db.String(250))
+    length = db.Column(db.Integer) #check type
+    artist_id = db.Column(db.Integer, db.ForeignKey("artist.id"))
+    artists = db.relationship("Artist")
 
 #DEFINE CACHING PATTERN
 CACHE_FNAME = "SI507finalproject_cached_data.json"
@@ -164,11 +161,6 @@ raw_events_data = get_ticketmaster_music_events()
 # genres_list = []
 # artists_list = []
 e = raw_events_data["_embedded"]["events"]
-
-# raw_songs_data = get_itunes_songs(artist_result)
-raw_songs_data = get_itunes_songs("Ariana Grande")
-# songs_list = []
-s = raw_songs_data["results"]
 
 # for i in e:
 #     print(type(i["_embedded"]))
@@ -251,6 +243,9 @@ def get_artist_result():
         for k in request.args:
             selected_artist = request.args.get(k,"None")
             # print(selected_artist)
+            raw_songs_data = get_itunes_songs(selected_artist)
+            s = raw_songs_data["results"]
+            song_recs = []
             artists = Artist.query.filter_by(artist_name=selected_artist)
             for item in artists:
                 # print(item.id)
@@ -260,7 +255,13 @@ def get_artist_result():
                     venues = Venue.query.filter_by(id=ev.venue_id)
                     for venue in venues:
                         filtered_events.append((ev.name, ev.date, venue.name, venue.city, venue.country))
-    return render_template("artist_results.html", selected_artist=selected_artist, filtered_events=filtered_events)
+
+                for song_item in s:
+                    populate_song = create_song(song_item, selected_artist)
+                    songs = Song.query.filter_by(artist_id=item.id)
+                    for song in songs[:10]:
+                        song_recs.append((song.title))
+    return render_template("artist_results.html", selected_artist=selected_artist, filtered_events=filtered_events, song_recs=song_recs)
 
 
 #CREATE DATABASE AND RUN FLASK APP

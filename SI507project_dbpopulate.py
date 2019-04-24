@@ -43,14 +43,13 @@ def create_genre(genre_name):
         session.commit()
         return genre
 
-# def create_song(dict, artist_name, genre_name): ##how to get the event chosen as input?
-#     # song = Song.query.filter_by(title=dict["trackName"]).first()
-#     # if song:
-#     #     return song
-#     # else:
-#         check_artist = create_artist(artist_name)
-#         check_genre = create_genre(genre_name)
-#         song = Song(title=dict["trackName"], album=dict["collectionName"], length=dict["trackTimeMillis"], artist_id=check_artist.id, genre_id=check_genre.id)
-#         session.add(song)
-#         session.commit()
-#         return song
+def create_song(dict, artist_name): ##how to get the event chosen as input?
+    song = Song.query.filter_by(title=dict["trackName"]).first()
+    if song:
+        return song
+    else:
+        check_artist = create_artist(artist_name)
+        song = Song(title=dict["trackName"], album=dict["collectionName"], length=dict["trackTimeMillis"], artist_id=check_artist.id)
+        session.add(song)
+        session.commit()
+        return song

@@ -6,4 +6,11 @@
   {% endfor %}
 </ul>
 
+<p>Want to listen to {{selected_artist}} best songs? Check these out!</p>
+<ul>
+  {% for song in song_recs[:10] %}
+    <li>{{song}}</li><br>
+  {% endfor %}
+</ul>
+
 <a href="{{ url_for('index')}}">Return to home page</a>
