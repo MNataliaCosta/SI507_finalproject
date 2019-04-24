@@ -216,6 +216,25 @@ def filter_by_genre():
         all_genre.append(item.genre_name)
     return render_template("genre.html", all_genre=all_genre)
 
+@app.route('/events-per-genre/result', methods=['GET'])
+def get_genre_result():
+    filtered_events = []
+    if request.method == "GET":
+        # print(request.args)
+        for k in request.args:
+            selected_genre = request.args.get(k,"None")
+            # print(selected_genre)
+            genre = Genre.query.filter_by(genre_name=selected_genre)
+            for item in genre:
+                # print(item)
+                events = Event.query.filter_by(genre_id=item.id)
+                for ev in events:
+                    venues = Venue.query.filter_by(id=ev.venue_id)
+                    for venue in venues:
+                        filtered_events.append((ev.name, ev.date, venue.name, venue.city, venue.country))
+    return render_template("genre_results.html", selected_genre=selected_genre, filtered_events=filtered_events)
+
+
 @app.route('/events-per-artist')
 def filter_by_artist():
     return render_template("artists.html")

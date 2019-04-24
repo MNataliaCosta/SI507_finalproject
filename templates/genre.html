@@ -1,6 +1,6 @@
 <h1>Search Events by Genre</h1>
 
-<form action="" method='GET'>
+<form action="http://localhost:5000/events-per-genre/result" method='GET'>
   <select name="genre">
     {% for genre in all_genre %}
     <option value="{{genre}}">{{genre}}</option>
