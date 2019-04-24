@@ -1,3 +1,12 @@
-<h1>Test - Top 10 Events</h1>
+<h1>Search Events by Genre</h1>
+
+<form action="" method='GET'>
+  <select name="genre">
+    {% for genre in all_genre %}
+    <option value="{{genre}}">{{genre}}</option>
+    {% endfor %}
+  </select>
+  <input type="submit" value="Submit">
+</form>
 
 <a href="{{ url_for('index')}}">Return to home page</a>

@@ -1,13 +1,14 @@
 from SI507project_tools import *
 
-def create_event(dict, name):
+def create_event(dict, name, genre, artist):
     event = Event.query.filter_by(name=name).first()
     if event:
         return event
     else:
-        check_genre = create_genre(name)
+        check_genre = create_genre(genre)
         check_venue = create_venue(dict)
         event = Event(name=dict["name"], date=dict["dates"]["start"]["localDate"], genre_id=check_genre.id, venue_id=check_venue.id)
+        event.artists.append(artist)
         session.add(event)
         session.commit()
         return event
@@ -17,7 +18,7 @@ def create_artist(artist_name):
     if artist:
         return artist
     else:
-        artist = Artist(artist_name=artist_name) ## need to include artist?
+        artist = Artist(artist_name=artist_name)
         session.add(artist)
         session.commit()
         return artist

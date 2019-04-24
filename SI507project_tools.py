@@ -35,6 +35,10 @@ class Event(db.Model):
     date = db.Column(db.String(64))
     genre_id = db.Column(db.Integer, db.ForeignKey("genre.id"))
     venue_id = db.Column(db.Integer, db.ForeignKey("venue.id"))
+    artists = db.relationship(
+        "Artist",
+        secondary=performances,
+        back_populates="events")
 
 
     def __repr__(self):
@@ -45,7 +49,10 @@ class Artist(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     # artist_name = db.Column(db.String(64), unique=True)
     artist_name = db.Column(db.String(64))
-    events = db.relationship("Event", secondary=performances, backref=db.backref("artist", lazy='dynamic'),lazy='dynamic')
+    events = db.relationship(
+        "Event",
+        secondary=performances,
+        back_populates="artists")
 
 
     def __repr__(self):
@@ -170,9 +177,10 @@ s = raw_songs_data["results"]
 @app.route('/') ##Home Page - links to other routes and instructions on how to use them
 def index():
     for event_item in e:
-        populate_events = create_event(event_item, event_item["_embedded"]["attractions"][0]["name"])
         populate_artist = create_artist(artist_name=event_item["_embedded"]["attractions"][0]["name"])
         populate_venues = create_venue(event_item)
+        populate_events = create_event(event_item, event_item["_embedded"]["attractions"][0]["name"], event_item["classifications"][0]["genre"]["name"], populate_artist)
+        # print(event_item["classifications"][0]["genre"]["name"])
         populate_genre = create_genre(genre_name=event_item["classifications"][0]["genre"]["name"])
     return render_template("index.html")
 
@@ -189,7 +197,6 @@ def get_location_result():
     filtered_events = []
     if request.method == "GET":
         # print(request.args)
-        # if len(request.args) > 0:
         for k in request.args:
             city = request.args.get(k,"None")
             # print(city)
@@ -203,7 +210,11 @@ def get_location_result():
 
 @app.route('/events-per-genre')
 def filter_by_genre():
-    return render_template("genre.html")
+    all_genre = []
+    genre = Genre.query.all()
+    for item in genre:
+        all_genre.append(item.genre_name)
+    return render_template("genre.html", all_genre=all_genre)
 
 @app.route('/events-per-artist')
 def filter_by_artist():
@@ -213,4 +224,4 @@ def filter_by_artist():
 #CREATE DATABASE AND RUN FLASK APP
 if __name__ == '__main__':
     db.create_all()
-    app.run()
+    app.run(debug=True)
