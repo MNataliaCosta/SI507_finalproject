@@ -237,7 +237,30 @@ def get_genre_result():
 
 @app.route('/events-per-artist')
 def filter_by_artist():
-    return render_template("artists.html")
+    all_artists = []
+    artists = Artist.query.all()
+    for item in artists:
+        all_artists.append(item.artist_name)
+    return render_template("artists.html", all_artists=all_artists)
+
+@app.route('/events-per-artist/result', methods=['GET'])
+def get_artist_result():
+    filtered_events = []
+    if request.method == "GET":
+        # print(request.args)
+        for k in request.args:
+            selected_artist = request.args.get(k,"None")
+            # print(selected_artist)
+            artists = Artist.query.filter_by(artist_name=selected_artist)
+            for item in artists:
+                # print(item.id)
+                # associations = performances.query.filter_by(artist_id=item.id)
+                events = Event.query.filter(Event.artists.any(id=item.id)).all()
+                for ev in events:
+                    venues = Venue.query.filter_by(id=ev.venue_id)
+                    for venue in venues:
+                        filtered_events.append((ev.name, ev.date, venue.name, venue.city, venue.country))
+    return render_template("artist_results.html", selected_artist=selected_artist, filtered_events=filtered_events)
 
 
 #CREATE DATABASE AND RUN FLASK APP

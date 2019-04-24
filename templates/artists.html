@@ -1,3 +1,12 @@
-<h1>Test - Top 10 Songs</h1>
+<h1>Search Events by Artist</h1>
+
+<form action="http://localhost:5000/events-per-artist/result" method='GET'>
+  <select name="artist">
+    {% for artist in all_artists %}
+    <option value="{{artist}}">{{artist}}</option>
+    {% endfor %}
+  </select>
+  <input type="submit" value="Submit">
+</form>
 
 <a href="{{ url_for('index')}}">Return to home page</a>
