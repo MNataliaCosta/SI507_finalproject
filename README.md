@@ -21,10 +21,12 @@ This project aggregates music events data from Ticketmaster and song data from i
 ## How to use
 1. Open your browser and access http://localhost:5000
 2. Interact with the application using the different routes available (see *Routes in this application* for more details )
-3. (Optional): Markdown syntax to include an screenshot/image: ![alt text](image.jpg)
+3. (Optional): Markdown syntax to include an screenshot/image:
 
 ## Routes in this application
 * `/` - home page; provide an overview of what the application does and how it works, including the links to navigate to the possible routes
+![alt text](screenshots/homepage.jpg)
+
 * `/events-per-location` - using the dropdown form, the user can select which city currently available in the database to search for events and submit the search
 * `/events-per-location/result` - displays a list of events based on the search by city
 * `/events-per-genre` - using the dropdown form, the user can select which genre currently available in the database to search for events and submit the search
@@ -55,6 +57,14 @@ This project aggregates music events data from Ticketmaster and song data from i
 - README.md
 - [507] Events Database Diagram.jpg
 - requirements.txt
+- screenshots
+  - homepage.jpg
+  - searchbycity.jpg
+  - searchbycity_result.jpg
+  - searchbygenre.jpg
+  - searchbygenre_result.jpg
+  - searchbyartist.jpg
+  - searchbyartist_result.jpg
 
 ---
 ## Code Requirements for Grading
