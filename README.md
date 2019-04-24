@@ -12,7 +12,6 @@ This project aggregates music events data from Ticketmaster and song data from i
 2. search events by genre;
 3. search events by artist and see a list of 10 recommended songs for the selected artist
 
-
 ## How to run
 1. Using your command line interface (e.g. GitBash), access the directory where the project files are saved  
 2. Install all requirements with `pip install -r requirements.txt`
@@ -25,14 +24,14 @@ This project aggregates music events data from Ticketmaster and song data from i
 
 ## Routes in this application
 * `/` - home page; provide an overview of what the application does and how it works, including the links to navigate to the possible routes
-![alt text](screenshots/homepage.jpg)
-
 * `/events-per-location` - using the dropdown form, the user can select which city currently available in the database to search for events and submit the search
 * `/events-per-location/result` - displays a list of events based on the search by city
 * `/events-per-genre` - using the dropdown form, the user can select which genre currently available in the database to search for events and submit the search
 * `/events-per-genre/result` - displays a list of events based on the search by genre
 * `/events-per-artist` - using the dropdown form, the user can select which artist currently available in the database to search for events and submit the search
 * `/events-per-artist/result` - displays a list of events based on the search by artist as well as list of 10 recommended songs of the artist
+
+Under `screenshots/` you can find screenshots of how the program should look like when working properly.
 
 ## How to run tests
 1. Make sure you have SQLite3 installed
