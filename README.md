@@ -20,7 +20,6 @@ This project aggregates music events data from Ticketmaster and song data from i
 ## How to use
 1. Open your browser and access http://localhost:5000
 2. Interact with the application using the different routes available (see *Routes in this application* for more details )
-3. (Optional): Markdown syntax to include an screenshot/image:
 
 ## Routes in this application
 * `/` - home page; provide an overview of what the application does and how it works, including the links to navigate to the possible routes
